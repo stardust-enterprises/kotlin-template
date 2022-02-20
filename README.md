@@ -72,4 +72,4 @@ this project is under the [ISC license][project-license].
 
 [badge-mvnc]: https://maven-badges.herokuapp.com/maven-central/fr.stardustenterprises/kotlin-template/badge.svg "maven central badge"
 
-[badge-github-ci]: https://github.com/stardust-enterprises/kotlin-template/actions/workflows/gradle-ci.yml/badge.svg?branch=trunk "github actions badge"
+[badge-github-ci]: https://github.com/stardust-enterprises/kotlin-template/actions/workflows/build.yml/badge.svg?branch=trunk "github actions badge"
