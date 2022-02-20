@@ -13,7 +13,6 @@ val Project.publishing: PublishingExtension get() =
 val Project.signing: SigningExtension get() =
     (this as ExtensionAware).extensions.getByName("signing") as SigningExtension
 
-
 fun Project.setupMavenPublications() {
     publishing.publications {
         // Sets up the Maven integration.

@@ -1,3 +1,4 @@
+
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.ExtensionAware
@@ -12,8 +13,7 @@ private val Project.sourceSets: SourceSetContainer
     get() =
         (this as ExtensionAware).extensions.getByName("sourceSets") as SourceSetContainer
 
-val defaultArtifactTasks: MutableList<Task>
-    get() = mutableListOf()
+val defaultArtifactTasks = mutableListOf<Task>()
 
 fun Project.addDefaultArtifacts() {
     val block: TaskContainer.() -> Unit = {
@@ -29,7 +29,7 @@ fun Project.addDefaultArtifacts() {
         if (apiExists) {
             // API artifact, only including the output of the API source and the
             // LICENSE file.
-            defaultArtifactTasks += create("apiJar", Jar::class) {
+            create("apiJar", Jar::class) {
                 group = "build"
 
                 archiveClassifier.set("api")
@@ -40,7 +40,7 @@ fun Project.addDefaultArtifacts() {
         }
 
         // Source artifact, including everything the 'main' does but not compiled.
-        defaultArtifactTasks += create("sourcesJar", Jar::class) {
+        create("sourcesJar", Jar::class) {
             group = "build"
 
             archiveClassifier.set("sources")
@@ -52,10 +52,10 @@ fun Project.addDefaultArtifacts() {
             from("LICENSE")
         }
 
-        val dokkaHtml = tasks.getByName("dokkaHtml")
+        val dokkaHtml = getByName("dokkaHtml")
 
         // The Javadoc artifact, containing the Dokka output and the LICENSE file.
-        defaultArtifactTasks += create("javadocJar", Jar::class) {
+        create("javadocJar", Jar::class) {
             group = "build"
 
             archiveClassifier.set("javadoc")
@@ -68,6 +68,10 @@ fun Project.addDefaultArtifacts() {
     this.tasks.block()
 
     artifacts {
-        defaultArtifactTasks.forEach { add("archives", it) }
+        defaultArtifactTasks.also { it.plusAssign(arrayOf(
+            tasks["sourcesJar"],
+            tasks["javadocJar"]
+        ).apply { if (apiExists) this.plus(tasks["apiJar"]) }) }
+            .forEach { add("archives", it) }
     }
 }

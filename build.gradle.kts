@@ -40,6 +40,7 @@ tasks {
 }
 
 addDefaultArtifacts()
+
 setupMavenPublications()
 
 nexusPublishing.repositories.sonatype {

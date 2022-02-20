@@ -3,7 +3,7 @@ object Coordinates {
     const val DESC = "Project description."
     const val REPO_ID = "stardust-enterprises/$NAME"
 
-    const val GROUP = "fr.stardustenterprises.rust"
+    const val GROUP = "fr.stardustenterprises"
     const val VERSION = "0.0.1"
 }
 
