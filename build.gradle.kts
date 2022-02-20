@@ -20,10 +20,10 @@ repositories {
 
 dependencies {
     Dependencies.kotlinModules.forEach {
-        implementation("org.jetbrains.kotlin", "kotlin-$it", Plugins.KOTLIN)
+        implementation("org.jetbrains.kotlin", "kotlin-$it", Dependencies.KOTLIN)
     }
 
-    testImplementation("org.jetbrains.kotlin", "kotlin-test", Plugins.KOTLIN)
+    testImplementation("org.jetbrains.kotlin", "kotlin-test", Dependencies.KOTLIN)
 }
 
 tasks {
