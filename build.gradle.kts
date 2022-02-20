@@ -26,6 +26,10 @@ dependencies {
     testImplementation("org.jetbrains.kotlin", "kotlin-test", Dependencies.KOTLIN)
 }
 
+ktlint {
+    this.disabledRules.add("no-wildcard-imports")
+}
+
 tasks {
     test {
         useJUnitPlatform()
