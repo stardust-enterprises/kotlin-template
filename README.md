@@ -8,6 +8,8 @@ template for all our [Kotlin][kotlin] projects.
 
 you can import [kotlin-template][project-url] from [maven central][mvnc] just by adding it to your dependencies:
 
+**Note:** this isn't actually a library you can import
+
 ## gradle
 
 ```kotlin

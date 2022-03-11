@@ -64,6 +64,11 @@ if (apiSourceSet) {
     }
 }
 
+// Disable unneeded rules
+ktlint {
+    this.disabledRules.add("no-wildcard-imports")
+}
+
 tasks {
     test {
         useJUnitPlatform()
