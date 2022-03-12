@@ -30,7 +30,7 @@ val apiSourceSet = true
 // Maven Repositories
 repositories {
     mavenCentral()
-    maven("https://jitpack.io")
+    Repositories.mavenUrls.forEach(::maven)
 }
 
 // Project Dependencies
@@ -103,7 +103,7 @@ tasks {
         moduleName.set(Coordinates.NAME)
 
         dokkaSourceSets.configureEach {
-            displayName.set("${Coordinates.NAME} github")
+            displayName.set("${Coordinates.NAME} on ${Coordinates.GIT_HOST}")
             includes.from(moduleFile.path)
 
             skipDeprecated.set(false)
@@ -115,13 +115,13 @@ tasks {
             // Link the source to the documentation
             sourceLink {
                 localDirectory.set(file("src"))
-                remoteUrl.set(URL("https://github.com/${Coordinates.REPO_ID}/tree/trunk/src"))
+                remoteUrl.set(URL("https://${Coordinates.GIT_HOST}/${Coordinates.REPO_ID}/tree/trunk/src"))
             }
 
-            // JNA external documentation links
-            externalDocumentationLink {
-                url.set(URL("https://javadoc.io/doc/net.java.dev.jna/jna/5.10.0/"))
-            }
+            // External documentation link template
+//            externalDocumentationLink {
+//                url.set(URL("https://javadoc.io/doc/net.java.dev.jna/jna/5.10.0/"))
+//            }
         }
     }
 
@@ -198,7 +198,7 @@ publishing.publications {
         pom {
             name.set(Coordinates.NAME)
             description.set(Coordinates.DESC)
-            url.set("https://github.com/${Coordinates.REPO_ID}")
+            url.set("https://${Coordinates.GIT_HOST}/${Coordinates.REPO_ID}")
 
             licenses {
                 Pom.licenses.forEach {
@@ -220,9 +220,9 @@ publishing.publications {
             }
 
             scm {
-                connection.set("scm:git:git://github.com/${Coordinates.REPO_ID}.git")
-                developerConnection.set("scm:git:ssh://github.com/${Coordinates.REPO_ID}.git")
-                url.set("https://github.com/${Coordinates.REPO_ID}")
+                connection.set("scm:git:git://${Coordinates.GIT_HOST}/${Coordinates.REPO_ID}.git")
+                developerConnection.set("scm:git:ssh://${Coordinates.GIT_HOST}/${Coordinates.REPO_ID}.git")
+                url.set("https://${Coordinates.GIT_HOST}/${Coordinates.REPO_ID}")
             }
         }
 

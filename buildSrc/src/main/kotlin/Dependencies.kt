@@ -12,3 +12,9 @@ object Dependencies {
 
     val kotlinModules = arrayOf("stdlib")
 }
+
+object Repositories {
+    val mavenUrls = arrayOf(
+        "https://jitpack.io/",
+    )
+}
