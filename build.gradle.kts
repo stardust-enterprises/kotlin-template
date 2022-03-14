@@ -5,6 +5,9 @@ plugins {
     `java-library`
     kotlin("jvm") version Plugins.KOTLIN
 
+    // Token Replacement
+    id("net.kyori.blossom") version Plugins.BLOSSOM
+
     // Code Quality
     id("org.jlleitschuh.gradle.ktlint") version Plugins.KTLINT
 
@@ -68,6 +71,16 @@ if (apiSourceSet) {
 // Disable unneeded rules
 ktlint {
     this.disabledRules.add("no-wildcard-imports")
+}
+
+blossom {
+    mapOf(
+        "project.name" to Coordinates.NAME,
+        "project.version" to Coordinates.VERSION,
+        "project.desc" to Coordinates.DESC,
+    ).mapKeys { "@${it.key}@" }.forEach { (key, value) ->
+        replaceToken(key, value)
+    }
 }
 
 tasks {
