@@ -29,6 +29,7 @@ val apiSourceSet = true
 
 // Maven Repositories
 repositories {
+    mavenLocal()
     mavenCentral()
     Repositories.mavenUrls.forEach(::maven)
 }
