@@ -247,7 +247,7 @@ tasks {
         val include by project.configurations
 
         this.configurations += include
-        this.archiveClassifier.set(if(ShadowJar.overrideJar) "" else "all")
+        this.archiveClassifier.set(if (ShadowJar.overrideJar) "" else "all")
         this.manifest.inheritFrom(jar.get().manifest)
 
         ShadowJar.packageRemappings.forEach(this::relocate)
