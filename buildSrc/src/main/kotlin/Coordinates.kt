@@ -1,6 +1,7 @@
 object Coordinates {
     const val NAME = "kotlin-template"
     const val DESC = "Project description."
+    const val VENDOR = "Stardust Enterprises"
 
     const val GIT_HOST = "github.com"
     const val REPO_ID = "stardust-enterprises/$NAME"

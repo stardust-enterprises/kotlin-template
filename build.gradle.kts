@@ -1,23 +1,34 @@
+import plugins.ShadowJar
 import java.net.URL
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
 
 plugins {
-    // Language Plugins
-    `java-library`
-    kotlin("jvm") version Plugins.KOTLIN
+    with(Plugins) {
+        // Language Plugins
+        `java-library`
+        kotlin("jvm") version KOTLIN
 
-    // Token Replacement
-    id("net.kyori.blossom") version Plugins.BLOSSOM
+        // Git Repo Information
+        id("org.ajoberstar.grgit") version GRGIT
 
-    // Code Quality
-    id("org.jlleitschuh.gradle.ktlint") version Plugins.KTLINT
+        // Token Replacement
+        id("net.kyori.blossom") version BLOSSOM
 
-    // Documentation Generation
-    id("org.jetbrains.dokka") version Plugins.DOKKA
+        // Dependency Shading
+        id("com.github.johnrengelman.shadow") version SHADOW
 
-    // Maven Publication
-    id("io.github.gradle-nexus.publish-plugin") version Plugins.NEXUS_PUBLISH
-    `maven-publish`
-    signing
+        // Code Quality
+        id("org.jlleitschuh.gradle.ktlint") version KTLINT
+
+        // Documentation Generation
+        id("org.jetbrains.dokka") version DOKKA
+
+        // Maven Publication
+        id("io.github.gradle-nexus.publish-plugin") version NEXUS_PUBLISH
+        `maven-publish`
+        signing
+    }
 }
 
 group = Coordinates.GROUP
@@ -30,19 +41,30 @@ val sourceVersion = "1.8"
 // Should we generate an /api/ source set
 val apiSourceSet = true
 
+// Add `include` configuration for ShadowJar
+configurations {
+    val include by creating
+    implementation.get().extendsFrom(include)
+}
+
 // Maven Repositories
 repositories {
     mavenLocal()
     mavenCentral()
+
     Repositories.mavenUrls.forEach(::maven)
 }
 
 // Project Dependencies
 dependencies {
-    Dependencies.kotlinModules.forEach {
-        implementation("org.jetbrains.kotlin", "kotlin-$it", Plugins.KOTLIN)
+    val include by configurations
+
+    with(Dependencies) {
+        kotlinModules.forEach {
+            include("org.jetbrains.kotlin", "kotlin-$it", KOTLIN)
+        }
+        testImplementation("org.jetbrains.kotlin", "kotlin-test", KOTLIN)
     }
-    testImplementation("org.jetbrains.kotlin", "kotlin-test", Plugins.KOTLIN)
 }
 
 // Generate the /api/ source set
@@ -142,6 +164,39 @@ tasks {
     // The original artifact, we just have to add the API source output and the
     // LICENSE file.
     jar {
+        fun normalizeVersion(versionLiteral: String): String {
+            val regex = Regex("(\\d+\\.\\d+\\.\\d+).*")
+            val match = regex.matchEntire(versionLiteral)
+            require(match != null) {
+                "Version '$versionLiteral' does not match version pattern, e.g. 1.0.0-QUALIFIER"
+            }
+            return match.groupValues[1]
+        }
+
+        val buildTimeAndDate = OffsetDateTime.now()
+        val buildDate = DateTimeFormatter.ISO_LOCAL_DATE.format(buildTimeAndDate)
+        val buildTime = DateTimeFormatter.ofPattern("HH:mm:ss.SSSZ").format(buildTimeAndDate)
+
+        mapOf(
+            "Created-By" to "${System.getProperty("java.version")} (${System.getProperty("java.vendor")} ${System.getProperty("java.vm.version")})",
+            "Build-Date" to buildDate,
+            "Build-Time" to buildTime,
+            "Build-Revision" to grgit.log()[0].id,
+            "Specification-Title" to project.name,
+            "Specification-Version" to normalizeVersion(project.version.toString()),
+            "Specification-Vendor" to Coordinates.VENDOR,
+            "Implementation-Title" to Coordinates.NAME,
+            "Implementation-Version" to Coordinates.VERSION,
+            "Implementation-Vendor" to Coordinates.VENDOR,
+            "Bundle-Name" to Coordinates.NAME,
+            "Bundle-Description" to Coordinates.DESC,
+            "Bundle-DocURL" to "https://${Coordinates.GIT_HOST}/${Coordinates.REPO_ID}",
+            "Bundle-Vendor" to Coordinates.VENDOR,
+            "Bundle-SymbolicName" to Coordinates.GROUP + '.' + Coordinates.NAME
+        ).forEach { (k, v) ->
+            manifest.attributes[k] = v
+        }
+
         if (apiSourceSet) {
             from(sourceSets["api"].output)
         }
@@ -186,6 +241,17 @@ tasks {
 
         from("LICENSE")
     }
+
+    // Configure ShadowJar
+    shadowJar {
+        val include by project.configurations
+
+        this.configurations += include
+        this.archiveClassifier.set(if(ShadowJar.overrideJar) "" else "all")
+        this.manifest.inheritFrom(jar.get().manifest)
+
+        ShadowJar.packageRemappings.forEach(this::relocate)
+    }
 }
 
 // Define the default artifacts' tasks
@@ -201,6 +267,7 @@ val defaultArtifactTasks = arrayOf(
 // Declare the artifacts
 artifacts {
     defaultArtifactTasks.forEach(::archives)
+    archives(tasks.shadowJar)
 }
 
 publishing.publications {
@@ -209,34 +276,38 @@ publishing.publications {
         from(components["java"])
         defaultArtifactTasks.forEach(::artifact)
 
-        pom {
-            name.set(Coordinates.NAME)
-            description.set(Coordinates.DESC)
-            url.set("https://${Coordinates.GIT_HOST}/${Coordinates.REPO_ID}")
+        with(Coordinates) {
+            pom {
+                name.set(NAME)
+                description.set(DESC)
+                url.set("https://$GIT_HOST/$REPO_ID")
 
-            licenses {
-                Pom.licenses.forEach {
-                    license {
-                        name.set(it.name)
-                        url.set(it.url)
-                        distribution.set(it.distribution)
+                with(Pom) {
+                    licenses {
+                        licenses.forEach {
+                            license {
+                                name.set(it.name)
+                                url.set(it.url)
+                                distribution.set(it.distribution)
+                            }
+                        }
+                    }
+
+                    developers {
+                        developers.forEach {
+                            developer {
+                                id.set(it.id)
+                                name.set(it.name)
+                            }
+                        }
                     }
                 }
-            }
 
-            developers {
-                Pom.developers.forEach {
-                    developer {
-                        id.set(it.id)
-                        name.set(it.name)
-                    }
+                scm {
+                    connection.set("scm:git:git://$GIT_HOST/$REPO_ID.git")
+                    developerConnection.set("scm:git:ssh://$GIT_HOST/$REPO_ID.git")
+                    url.set("https://$GIT_HOST/$REPO_ID")
                 }
-            }
-
-            scm {
-                connection.set("scm:git:git://${Coordinates.GIT_HOST}/${Coordinates.REPO_ID}.git")
-                developerConnection.set("scm:git:ssh://${Coordinates.GIT_HOST}/${Coordinates.REPO_ID}.git")
-                url.set("https://${Coordinates.GIT_HOST}/${Coordinates.REPO_ID}")
             }
         }
 
@@ -253,4 +324,18 @@ nexusPublishing.repositories.sonatype {
     // Skip this step if environment variables NEXUS_USERNAME or NEXUS_PASSWORD aren't set.
     username.set(properties["NEXUS_USERNAME"] as? String ?: return@sonatype)
     password.set(properties["NEXUS_PASSWORD"] as? String ?: return@sonatype)
+}
+
+// Task priority
+tasks.getByName("closeAndReleaseSonatypeStagingRepository")
+    .mustRunAfter("publishToSonatype")
+
+// Wrapper task since calling both one after the other
+// in IntellIJ seems to cause some problems.
+tasks.create("releaseToSonatype") {
+    this.dependsOn(
+        "publishToSonatype",
+        "closeAndReleaseSonatypeStagingRepository"
+    )
+    this.group = "publishing"
 }
