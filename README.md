@@ -5,7 +5,7 @@
 
 template for all our [Kotlin][kotlin] projects.
 
-# how to use
+# importing
 
 you can import [kotlin-template][project-url] from [maven central][mvnc] just by adding it to your dependencies:
 
