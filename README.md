@@ -1,5 +1,6 @@
 # kotlin-template
-[![Build][badge-github-ci]][project-gradle-ci] 
+
+[![Build][badge-github-ci]][project-gradle-ci]
 [![Maven Central][badge-mvnc]][project-mvnc]
 
 template for all our [Kotlin][kotlin] projects.
@@ -13,6 +14,10 @@ you can import [kotlin-template][project-url] from [maven central][mvnc] just by
 ## gradle
 
 ```kotlin
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     implementation("fr.stardustenterprises:kotlin-template:{VERSION}")
 }
