@@ -246,7 +246,9 @@ tasks {
     shadowJar {
         val include by project.configurations
 
+        this.configurations.clear()
         this.configurations += include
+
         this.archiveClassifier.set(if (ShadowJar.overrideJar) "" else "all")
         this.manifest.inheritFrom(jar.get().manifest)
 
