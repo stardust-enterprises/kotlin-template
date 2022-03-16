@@ -44,7 +44,10 @@ val apiSourceSet = true
 // Add `include` configuration for ShadowJar
 configurations {
     val include by creating
-    implementation.get().extendsFrom(include)
+    // don't include in maven pom
+    compileOnly.get().extendsFrom(include)
+    // but also work in tests
+    testImplementation.get().extendsFrom(include)
 }
 
 // Maven Repositories
@@ -61,7 +64,7 @@ dependencies {
 
     with(Dependencies) {
         kotlinModules.forEach {
-            include("org.jetbrains.kotlin", "kotlin-$it", KOTLIN)
+            implementation("org.jetbrains.kotlin", "kotlin-$it", KOTLIN)
         }
         testImplementation("org.jetbrains.kotlin", "kotlin-test", KOTLIN)
     }
@@ -177,8 +180,12 @@ tasks {
         val buildDate = DateTimeFormatter.ISO_LOCAL_DATE.format(buildTimeAndDate)
         val buildTime = DateTimeFormatter.ofPattern("HH:mm:ss.SSSZ").format(buildTimeAndDate)
 
+        val javaVersion = System.getProperty("java.version")
+        val javaVendor = System.getProperty("java.vendor")
+        val javaVmVersion = System.getProperty("java.vm.version")
+
         mapOf(
-            "Created-By" to "${System.getProperty("java.version")} (${System.getProperty("java.vendor")} ${System.getProperty("java.vm.version")})",
+            "Created-By" to "$javaVersion ($javaVendor $javaVmVersion)",
             "Build-Date" to buildDate,
             "Build-Time" to buildTime,
             "Build-Revision" to grgit.log()[0].id,
