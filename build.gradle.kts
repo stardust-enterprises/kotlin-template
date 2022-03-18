@@ -265,7 +265,9 @@ tasks {
         this.archiveClassifier.set(if (ShadowJar.overrideJar) "" else "all")
         this.manifest.inheritFrom(jar.get().manifest)
 
-        ShadowJar.packageRemappings.forEach(this::relocate)
+        ShadowJar.packageRemappings.forEach { (key, value) ->
+            this.relocate(key, value)
+        }
     }
 }
 
