@@ -1,3 +1,5 @@
+@file:Suppress("UNUSED_VARIABLE")
+
 import plugins.ShadowJar
 import java.net.URL
 import java.time.OffsetDateTime
@@ -93,6 +95,9 @@ if (apiSourceSet) {
     }
 }
 
+// The latest commit ID
+val buildRevision: String = grgit.log()[0].id ?: "dev"
+
 // Disable unneeded rules
 ktlint {
     this.disabledRules.add("no-wildcard-imports")
@@ -103,6 +108,7 @@ blossom {
         "project.name" to Coordinates.NAME,
         "project.version" to Coordinates.VERSION,
         "project.desc" to Coordinates.DESC,
+        "project.rev" to buildRevision,
     ).mapKeys { "@${it.key}@" }.forEach { (key, value) ->
         replaceToken(key, value)
     }
@@ -188,7 +194,7 @@ tasks {
             "Created-By" to "$javaVersion ($javaVendor $javaVmVersion)",
             "Build-Date" to buildDate,
             "Build-Time" to buildTime,
-            "Build-Revision" to grgit.log()[0].id,
+            "Build-Revision" to buildRevision,
             "Specification-Title" to project.name,
             "Specification-Version" to normalizeVersion(project.version.toString()),
             "Specification-Vendor" to Coordinates.VENDOR,
