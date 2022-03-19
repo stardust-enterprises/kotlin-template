@@ -14,10 +14,20 @@ object Pom {
     val licenses = arrayOf(
         License("ISC License", "https://opensource.org/licenses/ISC")
     )
+
     val developers = arrayOf(
-        Developer("dev1")
+        Developer("xtrm"),
+        Developer("lambdagg")
     )
 }
 
-data class License(val name: String, val url: String, val distribution: String = "repo")
-data class Developer(val id: String, val name: String = id)
+data class License(
+    val name: String,
+    val url: String,
+    val distribution: String = "repo"
+)
+
+data class Developer(
+    val id: String,
+    val name: String = id
+)

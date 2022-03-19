@@ -1,6 +1,6 @@
 fun main() {
-    val projectName = "@project.name@"
-    val projectVersion = "@project.version@"
+    val projectName = "@coordinates.name@"
+    val projectVersion = "@coordinates.version@"
     println("Project: $projectName v$projectVersion")
-    println("Description: @project.desc@")
+    println("Description: @coordinates.desc@")
 }

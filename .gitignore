@@ -1,4 +1,32 @@
-.gradle/
-.idea/
-**bin/
-**build/
+# eclipse
+eclipse
+bin
+*.launch
+.settings
+.metadata
+.classpath
+.project
+
+# idea
+out
+classes
+*.ipr
+*.iws
+*.iml
+
+.idea/*
+!.idea/copyright/
+
+# gradle
+build
+.gradle
+
+# cargo
+Cargo.lock
+target
+
+# other
+run
+.DS_Store
+Thumbs.db
+transformed/*
