@@ -18,7 +18,7 @@ val sourceVersion = JavaVersion.VERSION_1_8
  */
 val generateApiSourceSet = true
 
-// Project plugins, set up from the `buildsrc/.../plugins.kt` file
+// Project plugins, set up from the `buildSrc/.../plugins.kt` file
 plugins {
     api.plugin.PLUGINS.forEach {
         id(it.id)
@@ -50,7 +50,7 @@ repositories {
 //    Repositories.mavenUrls.forEach(::maven)
 }
 
-// Project dependencies, set up from the `buildsrc/.../dependencies.kt` file
+// Project dependencies, set up from the `buildSrc/.../dependencies.kt` file
 dependencies {
     api.repdep.DEPENDENCIES.forEach {
         if (it.config == api.repdep.UNDEFINED_CONFIG) {
