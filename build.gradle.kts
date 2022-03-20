@@ -18,7 +18,7 @@ val sourceVersion = JavaVersion.VERSION_1_8
  */
 val generateApiSourceSet = true
 
-// Project plugins, set up from the `buildSrc/.../plugins.kt` file
+// Project plugins, set up from the `buildSrc/.../plugins.kt` file.
 plugins {
     api.plugin.PLUGINS.forEach {
         id(it.id)
@@ -31,7 +31,9 @@ plugins {
     }
 }
 
-// Adds `include` configuration for ShadowJar
+// Adds an `include` configuration corresponding to ShadowJar.
+// Every dependency using the `include` configuration will be included (or
+// 'shaded') in the output JAR, producing a fat-jar (or uber-jar).
 configurations {
     val include by creating
 
@@ -47,10 +49,12 @@ repositories {
     mavenLocal()
     mavenCentral()
 
-//    Repositories.mavenUrls.forEach(::maven)
+    api.repdep.REPOSITORIES.forEach {
+        TODO("@xtrm")
+    }
 }
 
-// Project dependencies, set up from the `buildSrc/.../dependencies.kt` file
+// Project dependencies, set up from the `buildSrc/.../repdeps.kt` file
 dependencies {
     api.repdep.DEPENDENCIES.forEach {
         if (it.config == api.repdep.UNDEFINED_CONFIG) {
@@ -67,13 +71,13 @@ dependencies {
  * The group of the current artifact, corresponding to what's written in the
  * [Coordinates] file in `buildSrc`.
  */
-group = Coordinates.GROUP
+group = Coordinates.artifactGroup
 
 /**
  * The version of the current artifact, corresponding to what's written in the
  * [Coordinates] file in `buildSrc`.
  */
-version = Coordinates.VERSION
+version = Coordinates.version
 
 // Generate the `api` source set
 if (generateApiSourceSet) {
@@ -176,7 +180,7 @@ tasks {
         run {
             doFirst {
                 moduleFile.writeText(
-                    "# Module ${Coordinates.NAME}\n${Coordinates.DESC}"
+                    "# Module ${Coordinates.name}\n${Coordinates.description}"
                 )
             }
 
@@ -185,10 +189,10 @@ tasks {
             }
         }
 
-        moduleName.set(Coordinates.NAME)
+        moduleName.set(Coordinates.name)
 
         dokkaSourceSets.configureEach {
-            displayName.set("${Coordinates.NAME} on ${Coordinates.GIT_HOST}")
+            displayName.set("${Coordinates.name} on ${Coordinates.gitHost}")
             includes.from(moduleFile.path)
 
             skipDeprecated.set(false)
@@ -202,7 +206,7 @@ tasks {
                 localDirectory.set(file("src"))
                 remoteUrl.set(
                     URL(
-                        "https://${Coordinates.GIT_HOST}/${Coordinates.REPO_ID}/tree/trunk/src"
+                        "https://${Coordinates.gitHost}/${Coordinates.repoId}/tree/trunk/src"
                     )
                 )
             }
@@ -247,15 +251,15 @@ tasks {
                 "Build-Revision" to buildRevision,
                 "Specification-Title" to project.name,
                 "Specification-Version" to normalizeVersion(project.version.toString()),
-                "Specification-Vendor" to VENDOR,
-                "Implementation-Title" to NAME,
-                "Implementation-Version" to VERSION,
-                "Implementation-Vendor" to VENDOR,
-                "Bundle-Name" to NAME,
-                "Bundle-Description" to DESC,
-                "Bundle-DocURL" to "https://$GIT_HOST/$REPO_ID",
-                "Bundle-Vendor" to VENDOR,
-                "Bundle-SymbolicName" to "$GROUP.$NAME",
+                "Specification-Vendor" to vendor,
+                "Implementation-Title" to name,
+                "Implementation-Version" to version,
+                "Implementation-Vendor" to vendor,
+                "Bundle-Name" to name,
+                "Bundle-Description" to description,
+                "Bundle-DocURL" to "https://$gitHost/$repoId",
+                "Bundle-Vendor" to vendor,
+                "Bundle-SymbolicName" to "$artifactGroup.$name",
             )
         }
 
@@ -362,9 +366,9 @@ publishing.publications {
 
         with(Coordinates) {
             pom {
-                name.set(NAME)
-                description.set(DESC)
-                url.set("https://$GIT_HOST/$REPO_ID")
+                name.set(name)
+                description.set(this@with.description)
+                url.set("https://$gitHost/$repoId")
 
                 with(Pom) {
                     licenses {
@@ -388,9 +392,9 @@ publishing.publications {
                 }
 
                 scm {
-                    connection.set("scm:git:git://$GIT_HOST/$REPO_ID.git")
-                    developerConnection.set("scm:git:ssh://$GIT_HOST/$REPO_ID.git")
-                    url.set("https://$GIT_HOST/$REPO_ID")
+                    connection.set("scm:git:git://$gitHost/$repoId.git")
+                    developerConnection.set("scm:git:ssh://$gitHost/$repoId.git")
+                    url.set("https://$gitHost/$repoId")
                 }
             }
         }
