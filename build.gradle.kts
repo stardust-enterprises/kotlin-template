@@ -50,7 +50,17 @@ repositories {
     mavenCentral()
 
     api.repdep.REPOSITORIES.forEach {
-        TODO("@xtrm")
+        if (it.layout != null) {
+            ivy {
+                url = it.urls[0]
+                layout(it.layout.toString())
+            }
+        } else if (it.urls[0].toString().startsWith("http")) {
+            maven {
+                url = it.urls[0]
+                it.artifactUrls.forEach { url -> artifactUrls(url) }
+            }
+        } else flatDir { dirs(*it.urls) }
     }
 }
 
@@ -129,15 +139,23 @@ blossom {
         config.Blossom.replacementMap,
     ).forEach {
         it.forEach { (k, v) ->
-            replaceToken("@$k@", v)
+            replaceToken(
+                config.Blossom.replacementInputFormat.replace(
+                    api.config.BLOSSOM_FORMAT_STRING,
+                    k,
+                ),
+                config.Blossom.replacementOutputFormat.ifEmpty {
+                    api.config.BLOSSOM_FORMAT_STRING
+                }.replace(api.config.BLOSSOM_FORMAT_STRING, v),
+            )
         }
     }
 }
 
 tasks {
-    test {
-        useJUnitPlatform()
-    }
+    build {  }
+
+    test { useJUnitPlatform() }
 
     var targetString = targetVersion.majorVersion
     if (targetVersion.ordinal < 10) {
@@ -150,9 +168,7 @@ tasks {
     }
 
     // Configure JVM versions
-    compileKotlin {
-        kotlinOptions.jvmTarget = targetString
-    }
+    compileKotlin { kotlinOptions.jvmTarget = targetString }
 
     compileJava {
         targetCompatibility = targetString
@@ -173,9 +189,7 @@ tasks {
                 )
             }
 
-            doLast {
-                moduleFile.delete()
-            }
+            doLast { moduleFile.delete() }
         }
 
         moduleName.set(Coordinates.name)
@@ -193,44 +207,42 @@ tasks {
             // Link the source to the documentation
             sourceLink {
                 localDirectory.set(file("src"))
-                remoteUrl.set(
-                    URL(
-                        "https://${Coordinates.gitHost}/${Coordinates.repoId}/tree/trunk/src"
-                    )
-                )
+                remoteUrl.set(URL("${Coordinates.gitUrl}/tree/trunk/src"))
             }
 
-            // External documentation link template
-//            externalDocumentationLink {
-//                url.set(URL("https://javadoc.io/doc/net.java.dev.jna/jna/5.10.0/"))
-//            }
+            // @see [config.Dokka.externalDocumentations]
+            config.Dokka.externalDocumentations.forEach {
+                externalDocumentationLink {
+                    url.set(URL(it))
+                }
+            }
         }
     }
 
     // The main artifact, we just have to add the API source output and the
     // LICENSE file.
     jar {
-        fun normalizeVersion(versionLiteral: String): String {
-            val match = Regex("(\\d+\\.\\d+\\.\\d+).*")
-                .matchEntire(versionLiteral)
-
-            require(match != null) {
-                "Version '$versionLiteral' does not match version pattern, e.g. 1.0.0-QUALIFIER"
-            }
-
-            return match.groupValues[1]
-        }
-
-        val buildTimeAndDate = OffsetDateTime.now()
-
-        val buildDate = DateTimeFormatter.ISO_LOCAL_DATE
-            .format(buildTimeAndDate)
-        val buildTime = DateTimeFormatter.ofPattern("HH:mm:ss.SSSZ")
-            .format(buildTimeAndDate)
-
+        // Java distribution stuff
         val javaVersion = System.getProperty("java.version")
         val javaVendor = System.getProperty("java.vendor")
         val jvmVersion = System.getProperty("java.vm.version")
+
+        // Build time & date
+        val (buildDate, buildTime) = OffsetDateTime.now().run {
+            arrayOf(
+                DateTimeFormatter.ISO_LOCAL_DATE.format(this),
+                DateTimeFormatter.ofPattern("HH:mm:ss.SSSZ").format(this)
+            )
+        }
+
+        // Normalizing project version
+        val prettyProjectVersion = project.version.toString().run {
+            Regex("(\\d+\\.\\d+\\.\\d+).*").matchEntire(this)
+                ?.run { groupValues[1] }
+                ?: throw Error(
+                    "Version '$this' does not match version pattern, e.g. 1.0.0-QUALIFIER"
+                )
+        }
 
         with(Coordinates) {
             manifest.attributes(
@@ -239,7 +251,7 @@ tasks {
                 "Build-Time" to buildTime,
                 "Build-Revision" to buildRevision,
                 "Specification-Title" to project.name,
-                "Specification-Version" to normalizeVersion(project.version.toString()),
+                "Specification-Version" to prettyProjectVersion,
                 "Specification-Vendor" to vendor,
                 "Implementation-Title" to name,
                 "Implementation-Version" to version,
@@ -316,10 +328,12 @@ tasks {
         // Task priority
         val publishToSonatype by getting
         val closeAndReleaseSonatypeStagingRepository by getting
-        closeAndReleaseSonatypeStagingRepository.mustRunAfter(publishToSonatype)
 
-        // Wrapper task since calling both one after the other in IntelliJ seems to
-        // cause some problems.
+        closeAndReleaseSonatypeStagingRepository
+            .mustRunAfter(publishToSonatype)
+
+        // Wrapper task since calling both one after the other in IntelliJ
+        // seems to cause some problems.
         create("releaseToSonatype") {
             group = "publishing"
 

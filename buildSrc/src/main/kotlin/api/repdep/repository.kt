@@ -1,8 +1,8 @@
 package api.repdep
 
 import repositories
+import java.net.URI
 
-import java.net.URL
 import java.nio.file.Path
 import java.util.*
 
@@ -15,23 +15,23 @@ val REPOSITORIES: List<Repository> by lazy {
 
 fun maven(url: String, vararg artifactUrls: String) =
     Repository(
-        arrayOf(URL("https://$url")),
-        artifactUrls.map { URL(it) }.toTypedArray(),
+        arrayOf(URI("https://$url")),
+        artifactUrls.map { URI(it) }.toTypedArray(),
     )
 
 fun ivy(url: String, layout: IvyLayout = IvyLayout.GRADLE, vararg artifactUrls: String) =
     Repository(
-        arrayOf(URL("https://$url")),
-        artifactUrls.map { URL(it) }.toTypedArray(),
+        arrayOf(URI("https://$url")),
+        artifactUrls.map { URI(it) }.toTypedArray(),
         layout,
     )
 
 fun flatDir(vararg path: Path) =
-    Repository(path.map { it.toUri().toURL() }.toTypedArray())
+    Repository(path.map { it.toUri() }.toTypedArray())
 
 data class Repository(
-    val url: Array<URL>,
-    val artifactsUrl: Array<URL> = arrayOf(),
+    val urls: Array<URI>,
+    val artifactUrls: Array<URI> = arrayOf(),
     val layout: IvyLayout? = null,
 ) {
     init { REPOSITORY_REGISTRY.add(this) }
@@ -45,12 +45,13 @@ data class Repository(
             return false
         }
 
-        return url.contentEquals((other as Repository).url)
+        return urls.contentEquals((other as Repository).urls)
     }
 
-    override fun hashCode(): Int = url.contentHashCode()
+    override fun hashCode(): Int = urls.contentHashCode()
 }
 
+@Suppress("unused")
 enum class IvyLayout {
     GRADLE, MAVEN, IVY;
 

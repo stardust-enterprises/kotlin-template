@@ -2,18 +2,19 @@ package config
 
 object ShadowJar {
     /**
-     * Should the shadow jar override the base jarfile
+     * Should the shadow jar override the base jar file
      * or be its own separate jar.
+     *
+     * Default: false
      */
     const val overrideJar = false
 
     /**
-     * Packages which should be moved
-     * to another one.
+     * Packages which should be moved to (or 'remapped as') another one.
      *
-     * Ex:
-     * org.ow2.asm -> me.xtrm.project.libs.asm
+     * Default: (empty)
      */
-    val packageRemappings: Map<String, String> =
-        mapOf()
+    val packageRemappings: Map<String, String> = mapOf(
+        // "org.ow2.asm" to "me.xtrm.project.libs.asm",
+    )
 }

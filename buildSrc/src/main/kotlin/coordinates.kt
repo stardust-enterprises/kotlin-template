@@ -1,3 +1,5 @@
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 import api.coordinate.*
 
 object Coordinates {
@@ -8,8 +10,9 @@ object Coordinates {
     const val artifactGroup = "fr.stardustenterprises"
     const val vendor = "Stardust Enterprises"
 
-    const val gitHost = "github.com"
+    const val gitHost = "https://github.com"
     const val repoId = "stardust-enterprises/$name"
+    const val gitUrl = "$gitHost/$repoId"
 }
 
 object Pom {
@@ -19,6 +22,6 @@ object Pom {
 
     val developers = arrayOf(
         Developer("xtrm", "oss@xtrm.me"),
-        Developer("lambdagg", "lambda@stardustenterprises.fr")
+        Developer("lambdagg", "lambdagg@tuta.io")
     )
 }

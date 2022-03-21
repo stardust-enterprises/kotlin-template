@@ -1,7 +1,7 @@
 import api.repdep.*
 
 fun repositories() {
-    maven("jitpack.io")
+//    maven("jitpack.io")
 }
 
 fun dependencies() {

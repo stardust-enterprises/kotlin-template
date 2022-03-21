@@ -2,12 +2,13 @@ package api.repdep
 
 import KOTLIN_VERSION
 import dependencies
+import java.util.*
 
 /**
  * The string to attribute to a dependency that has no configuration defined
  * (yet), AKA invalid dependencies.
  */
-const val UNDEFINED_CONFIG = "_undefined"
+val UNDEFINED_CONFIG = "{__undefined__${UUID.randomUUID()}__}"
 
 internal val DEPENDENCY_REGISTRY = mutableListOf<Dependency>()
 
