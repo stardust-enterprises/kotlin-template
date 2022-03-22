@@ -1,4 +1,4 @@
-# kotlin-template
+# ktemplate
 
 [![Build][badge-github-ci]][project-gradle-ci]
 [![Maven Central][badge-mvnc]][project-mvnc]
@@ -7,7 +7,7 @@ template for all our [Kotlin][kotlin] projects.
 
 # importing
 
-you can import [kotlin-template][project-url] from [maven central][mvnc] just by adding it to your dependencies:
+you can import [ktemplate][project-url] from [maven central][mvnc] just by adding it to your dependencies:
 
 **Note:** this isn't actually a library you can import
 
@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    implementation("fr.stardustenterprises:kotlin-template:{VERSION}")
+    implementation("fr.stardustenterprises:ktemplate:{VERSION}")
 }
 ```
 
@@ -28,7 +28,7 @@ dependencies {
 ```xml
 <dependency>
     <groupId>fr.stardustenterprises</groupId>
-    <artifactId>kotlin-template</artifactId>
+    <artifactId>ktemplate</artifactId>
     <version>{VERSION}</version>
 </dependency>
 ```
@@ -61,22 +61,22 @@ this project is under the [ISC license][project-license].
 
 <!-- Project Links -->
 
-[project-url]: https://github.com/stardust-enterprises/kotlin-template "project github repository"
+[project-url]: https://github.com/stardust-enterprises/ktemplate "project github repository"
 
-[fork]: https://github.com/stardust-enterprises/kotlin-template/fork "fork this repository"
+[fork]: https://github.com/stardust-enterprises/ktemplate/fork "fork this repository"
 
-[new-pr]: https://github.com/stardust-enterprises/kotlin-template/pulls/new "create a new pull request"
+[new-pr]: https://github.com/stardust-enterprises/ktemplate/pulls/new "create a new pull request"
 
-[new-issue]: https://github.com/stardust-enterprises/kotlin-template/issues/new "create a new issue"
+[new-issue]: https://github.com/stardust-enterprises/ktemplate/issues/new "create a new issue"
 
-[project-mvnc]: https://maven-badges.herokuapp.com/maven-central/fr.stardustenterprises/kotlin-template "maven central repository"
+[project-mvnc]: https://maven-badges.herokuapp.com/maven-central/fr.stardustenterprises/ktemplate "maven central repository"
 
-[project-gradle-ci]: https://github.com/stardust-enterprises/kotlin-template/actions/workflows/gradle-ci.yml "gradle ci workflow"
+[project-gradle-ci]: https://github.com/stardust-enterprises/ktemplate/actions/workflows/gradle-ci.yml "gradle ci workflow"
 
-[project-license]: https://github.com/stardust-enterprises/kotlin-template/blob/trunk/LICENSE "LICENSE source file"
+[project-license]: https://github.com/stardust-enterprises/ktemplate/blob/trunk/LICENSE "LICENSE source file"
 
 <!-- Badges -->
 
-[badge-mvnc]: https://maven-badges.herokuapp.com/maven-central/fr.stardustenterprises/kotlin-template/badge.svg "maven central badge"
+[badge-mvnc]: https://maven-badges.herokuapp.com/maven-central/fr.stardustenterprises/ktemplate/badge.svg "maven central badge"
 
-[badge-github-ci]: https://github.com/stardust-enterprises/kotlin-template/actions/workflows/build.yml/badge.svg?branch=trunk "github actions badge"
+[badge-github-ci]: https://github.com/stardust-enterprises/ktemplate/actions/workflows/build.yml/badge.svg?branch=trunk "github actions badge"

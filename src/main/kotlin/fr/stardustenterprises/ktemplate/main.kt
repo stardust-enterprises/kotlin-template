@@ -1,4 +1,4 @@
-package fr.stardustenterprises.template
+package fr.stardustenterprises.ktemplate
 
 fun main() {
     val projectName = "@coordinates.name@"

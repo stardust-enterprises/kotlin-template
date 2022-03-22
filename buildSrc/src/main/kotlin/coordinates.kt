@@ -6,7 +6,7 @@ import api.coordinate.*
  * Coordinates of this artifact.
  */
 object Coordinates {
-    const val name = "kotlin-template"
+    const val name = "ktemplate"
     const val description = "Project description."
     const val version = "0.0.1"
 

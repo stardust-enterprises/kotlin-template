@@ -262,7 +262,7 @@ tasks {
                 "Bundle-DocURL" to gitUrl,
                 "Bundle-Vendor" to vendor,
                 "Bundle-SymbolicName" to "$artifactGroup.$name",
-                //"Main-Class" to "", TODO: Create an annotation for the main class or file to be filled here
+                "Main-Class" to "$artifactGroup.$name.MainKt", // TODO: Create an annotation for the main class or file to be filled here
             )
         }
 
