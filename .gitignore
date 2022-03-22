@@ -27,6 +27,7 @@ target
 
 # other
 run
+*.temp.*
 .DS_Store
 Thumbs.db
 transformed/*

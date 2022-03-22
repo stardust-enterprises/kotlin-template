@@ -182,11 +182,15 @@ tasks {
         // In order to have a description on the rendered docs, we have to have
         // a file with the # Module thingy in it. That's what we're
         // automagically creating and deleting here.
-        doFirst {
-            moduleFile.deleteOnExit()
-            moduleFile.writeText(
-                "# Module ${Coordinates.name}\n${Coordinates.description}"
-            )
+        run {
+            doFirst {
+                moduleFile.deleteOnExit()
+                moduleFile.writeText(
+                    "# Module ${Coordinates.name}\n${Coordinates.description}"
+                )
+            }
+
+            doLast { moduleFile.delete() }
         }
 
         moduleName.set(Coordinates.name)
