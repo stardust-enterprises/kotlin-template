@@ -8,6 +8,9 @@ import java.util.*
 
 internal val REPOSITORY_REGISTRY = mutableListOf<Repository>()
 
+/**
+ * A list of repositories loaded from the `repdeps.kt` file.
+ */
 val REPOSITORIES: List<Repository> by lazy {
     repositories()
     REPOSITORY_REGISTRY

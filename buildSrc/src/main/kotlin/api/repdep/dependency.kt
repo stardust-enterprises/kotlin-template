@@ -12,6 +12,9 @@ val UNDEFINED_CONFIG = "{__undefined__${UUID.randomUUID()}__}"
 
 internal val DEPENDENCY_REGISTRY = mutableListOf<Dependency>()
 
+/**
+ * A list of dependencies loaded from the `repdeps.kt` file.
+ */
 val DEPENDENCIES: List<Dependency> by lazy {
     dependencies()
     DEPENDENCY_REGISTRY

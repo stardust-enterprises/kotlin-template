@@ -2,6 +2,9 @@
 
 import api.coordinate.*
 
+/**
+ * Coordinates of this artifact.
+ */
 object Coordinates {
     const val name = "kotlin-template"
     const val description = "Project description."
@@ -15,6 +18,9 @@ object Coordinates {
     const val gitUrl = "https://$gitHost/$repoId"
 }
 
+/**
+ * Extra POM data of this artifact.
+ */
 object Pom {
     val licenses = arrayOf(
         License("ISC License", "https://opensource.org/licenses/ISC")

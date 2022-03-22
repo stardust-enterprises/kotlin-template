@@ -4,6 +4,9 @@ package config
 
 import api.config.BLOSSOM_FORMAT_STRING
 
+/**
+ * Blossom configuration.
+ */
 object Blossom {
     /**
      * Replacements themselves go here, meaning everything that matches using
@@ -22,7 +25,7 @@ object Blossom {
     /**
      * The input format of the Blossom replacement.
      *
-     * Default: @$BLOSSOM_FORMAT_STRING@
+     * Default: "@$BLOSSOM_FORMAT_STRING@"
      */
     val replacementInputFormat: String = "@$BLOSSOM_FORMAT_STRING@"
 
@@ -33,7 +36,7 @@ object Blossom {
      * [BLOSSOM_FORMAT_STRING] to match a string and replace it with the wanted
      * one.
      *
-     * Default: (empty)
+     * Default: ""
      */
     val replacementOutputFormat: String = ""
 }

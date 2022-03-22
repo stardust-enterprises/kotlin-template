@@ -1,5 +1,8 @@
 package config
 
+/**
+ * Dokka configuration.
+ */
 object Dokka {
     /**
      * Custom external documentations, as an array of stringed URLs.

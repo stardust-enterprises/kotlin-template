@@ -10,7 +10,7 @@ data class License(
 )
 
 /**
- * A POM-compliant developer object.
+ * A POM-compliant Developer object.
  */
 data class Developer(
     val name: String,

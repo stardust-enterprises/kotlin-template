@@ -1,6 +1,8 @@
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import java.net.URL
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
+import java.util.UUID
 
 /**
  * The JVM version we're currently targeting, or compiling to.
@@ -156,15 +158,11 @@ tasks {
     build { dependsOn(ktlintFormat) }
     test { useJUnitPlatform() }
 
-    var targetString = targetVersion.majorVersion
-    if (targetVersion.ordinal < 10) {
-        targetString = "1.$targetString"
-    }
+    val targetString =
+        (if (targetVersion.ordinal < 10) "1." else "") + targetVersion.majorVersion
 
-    var sourceString = sourceVersion.majorVersion
-    if (sourceVersion.ordinal < 10) {
-        sourceString = "1.$sourceString"
-    }
+    val sourceString =
+        (if (sourceVersion.ordinal < 10) "1." else "") + sourceVersion.majorVersion
 
     // Configure JVM versions
     compileKotlin { kotlinOptions.jvmTarget = targetString }
@@ -176,19 +174,19 @@ tasks {
 
     // Configure the documentation
     dokkaHtml {
-        val moduleFile = File(projectDir, "MODULE.temp.md")
+        val moduleFile = File(
+            projectDir,
+            "MODULE.temp.${UUID.randomUUID()}.md"
+        )
 
         // In order to have a description on the rendered docs, we have to have
         // a file with the # Module thingy in it. That's what we're
         // automagically creating and deleting here.
-        run {
-            doFirst {
-                moduleFile.writeText(
-                    "# Module ${Coordinates.name}\n${Coordinates.description}"
-                )
-            }
-
-            doLast { moduleFile.delete() }
+        doFirst {
+            moduleFile.deleteOnExit()
+            moduleFile.writeText(
+                "# Module ${Coordinates.name}\n${Coordinates.description}"
+            )
         }
 
         moduleName.set(Coordinates.name)
@@ -209,11 +207,11 @@ tasks {
                 remoteUrl.set(URL("${Coordinates.gitUrl}/tree/trunk/src"))
             }
 
-            // @see [config.Dokka.externalDocumentations]
+            /**
+             * @see config.Dokka.externalDocumentations
+             */
             config.Dokka.externalDocumentations.forEach {
-                externalDocumentationLink {
-                    url.set(URL(it))
-                }
+                externalDocumentationLink { url.set(URL(it)) }
             }
         }
     }
@@ -318,9 +316,7 @@ tasks {
         archiveClassifier.set(if (config.ShadowJar.overrideJar) "" else "all")
         manifest.inheritFrom(jar.get().manifest)
 
-        config.ShadowJar.packageRemappings.forEach { (key, value) ->
-            relocate(key, value)
-        }
+        config.ShadowJar.packageRemappings.forEach { (k, v) -> relocate(k, v) }
     }
 
     afterEvaluate {
@@ -345,14 +341,9 @@ tasks {
 }
 
 // Define the default artifacts' tasks
-val defaultArtifactTasks = arrayOf(
-    tasks["sourcesJar"],
-    tasks["javadocJar"]
-).also {
-    if (generateApiSourceSet) {
-        it.plus(tasks["apiJar"])
-    }
-}
+val defaultArtifactTasks = arrayOf("sourcesJar", "javadocJar")
+    .applyIf(generateApiSourceSet) { plus("apiJar") }
+    .map { tasks[it] }
 
 // Declare the artifacts
 artifacts {
@@ -395,7 +386,9 @@ publishing.publications {
 
                 scm {
                     connection.set("scm:git:git://$gitHost/$repoId.git")
-                    developerConnection.set("scm:git:ssh://$gitHost/$repoId.git")
+                    developerConnection.set(
+                        "scm:git:ssh://$gitHost/$repoId.git"
+                    )
                     url.set(gitUrl)
                 }
             }
@@ -409,9 +402,14 @@ publishing.publications {
 // Configure publishing to Maven Central
 nexusPublishing.repositories.sonatype {
     nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
-    snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+    snapshotRepositoryUrl.set(
+        uri(
+            "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+        )
+    )
 
-    // Skip this step if environment variables NEXUS_USERNAME or NEXUS_PASSWORD aren't set.
+    // Skip this step if environment variables NEXUS_USERNAME or NEXUS_PASSWORD
+    // aren't set.
     username.set(properties["NEXUS_USERNAME"] as? String ?: return@sonatype)
     password.set(properties["NEXUS_PASSWORD"] as? String ?: return@sonatype)
 }

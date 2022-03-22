@@ -1,5 +1,8 @@
 package config
 
+/**
+ * Shadow configuration.
+ */
 object ShadowJar {
     /**
      * Should the shadow jar override the base jar file
