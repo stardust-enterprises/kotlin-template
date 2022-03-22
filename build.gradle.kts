@@ -257,7 +257,7 @@ tasks {
                 "Implementation-Vendor" to vendor,
                 "Bundle-Name" to name,
                 "Bundle-Description" to description,
-                "Bundle-DocURL" to "https://$gitHost/$repoId",
+                "Bundle-DocURL" to gitUrl,
                 "Bundle-Vendor" to vendor,
                 "Bundle-SymbolicName" to "$artifactGroup.$name",
             )
@@ -370,7 +370,7 @@ publishing.publications {
             pom {
                 name.set(name)
                 description.set(this@with.description)
-                url.set("https://$gitHost/$repoId")
+                url.set(gitUrl)
 
                 with(Pom) {
                     licenses {
@@ -396,7 +396,7 @@ publishing.publications {
                 scm {
                     connection.set("scm:git:git://$gitHost/$repoId.git")
                     developerConnection.set("scm:git:ssh://$gitHost/$repoId.git")
-                    url.set("https://$gitHost/$repoId")
+                    url.set(gitUrl)
                 }
             }
         }

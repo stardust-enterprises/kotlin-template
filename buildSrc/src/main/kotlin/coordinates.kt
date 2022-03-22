@@ -10,9 +10,9 @@ object Coordinates {
     const val artifactGroup = "fr.stardustenterprises"
     const val vendor = "Stardust Enterprises"
 
-    const val gitHost = "https://github.com"
+    const val gitHost = "github.com"
     const val repoId = "stardust-enterprises/$name"
-    const val gitUrl = "$gitHost/$repoId"
+    const val gitUrl = "https://$gitHost/$repoId"
 }
 
 object Pom {
