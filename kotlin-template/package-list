@@ -1,0 +1,6 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:fr.stardustenterprises.template////PointingToDeclaration/kotlin-template/fr.stardustenterprises.template/index.html
+$dokka.location:fr.stardustenterprises.template//main/#/PointingToDeclaration/kotlin-template/fr.stardustenterprises.template/main.html
+fr.stardustenterprises.template
+
