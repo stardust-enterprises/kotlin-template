@@ -153,8 +153,7 @@ blossom {
 }
 
 tasks {
-    build {  }
-
+    build { dependsOn(ktlintFormat) }
     test { useJUnitPlatform() }
 
     var targetString = targetVersion.majorVersion
