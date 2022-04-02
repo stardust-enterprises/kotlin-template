@@ -269,6 +269,26 @@ tasks {
             this.relocate(key, value)
         }
     }
+
+    afterEvaluate {
+        // Task priority
+        val publishToSonatype by getting
+        val closeAndReleaseSonatypeStagingRepository by getting
+
+        closeAndReleaseSonatypeStagingRepository
+            .mustRunAfter(publishToSonatype)
+
+        // Wrapper task since calling both one after the other in IntelliJ
+        // seems to cause some problems.
+        create("releaseToSonatype") {
+            group = "publishing"
+
+            dependsOn(
+                publishToSonatype,
+                closeAndReleaseSonatypeStagingRepository
+            )
+        }
+    }
 }
 
 // Define the default artifacts' tasks
@@ -329,7 +349,10 @@ publishing.publications {
         }
 
         // Configure the signing extension to sign this Maven artifact.
-        signing.sign(this)
+        signing {
+            isRequired = project.properties["signing.keyId"] != null
+            sign(this@create)
+        }
     }
 }
 
@@ -341,18 +364,4 @@ nexusPublishing.repositories.sonatype {
     // Skip this step if environment variables NEXUS_USERNAME or NEXUS_PASSWORD aren't set.
     username.set(properties["NEXUS_USERNAME"] as? String ?: return@sonatype)
     password.set(properties["NEXUS_PASSWORD"] as? String ?: return@sonatype)
-}
-
-// Task priority
-tasks.getByName("closeAndReleaseSonatypeStagingRepository")
-    .mustRunAfter("publishToSonatype")
-
-// Wrapper task since calling both one after the other
-// in IntellIJ seems to cause some problems.
-tasks.create("releaseToSonatype") {
-    this.dependsOn(
-        "publishToSonatype",
-        "closeAndReleaseSonatypeStagingRepository"
-    )
-    this.group = "publishing"
 }
