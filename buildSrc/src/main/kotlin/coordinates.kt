@@ -28,6 +28,7 @@ object Pom {
 
     val developers = arrayOf(
         Developer("xtrm", "oss@xtrm.me"),
-        Developer("lambdagg", "lambdagg@tuta.io")
+        Developer("lambdagg", "lambdagg@tuta.io"),
+        Developer("Shyrogan", "<none>")
     )
 }
