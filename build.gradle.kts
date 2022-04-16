@@ -37,8 +37,10 @@ plugins {
 val targetVersion = "1.8"
 // What JVM version this project is written in
 val sourceVersion = "1.8"
-// Should we generate an /api/ source set
-val apiSourceSet = true
+// Which source-sets to add.
+val additionalSourceSets: Array<String> = arrayOf(
+    "api"
+)
 
 // Handle configurations lower down
 configurations()
@@ -87,16 +89,16 @@ group = Coordinates.GROUP
 version = Coordinates.VERSION
 
 // Generate the /api/ source set
-if (apiSourceSet) {
-    sourceSets {
-        val name = "api"
+additionalSourceSets.forEach(::createSourceSet)
 
+fun createSourceSet(name: String, sourceRoot: String = "src/$name") {
+    sourceSets {
         val main by sourceSets
         val test by sourceSets
 
         val sourceSet = create(name) {
-            java.srcDir("src/$name/kotlin")
-            resources.srcDir("src/$name/resources")
+            java.srcDir("$sourceRoot/kotlin")
+            resources.srcDir("$sourceRoot/resources")
 
             this.compileClasspath += main.compileClasspath
             this.runtimeClasspath += main.runtimeClasspath
@@ -235,20 +237,20 @@ tasks {
             }
         }
 
-        if (apiSourceSet) {
-            from(sourceSets["api"].output)
+        additionalSourceSets.forEach {
+            from(sourceSets[it].output)
         }
         from("LICENSE")
     }
 
-    if (apiSourceSet) {
-        // API artifact, only including the output of the API source and the
-        // LICENSE file.
-        create("apiJar", Jar::class) {
+    additionalSourceSets.forEach {
+        // Custom artifact, only including the output of
+        // the source set and the LICENSE file.
+        create(it + "Jar", Jar::class) {
             group = "build"
 
-            archiveClassifier.set("api")
-            from(sourceSets["api"].output)
+            archiveClassifier.set(it)
+            from(sourceSets[it].output)
 
             from("LICENSE")
         }
@@ -261,8 +263,8 @@ tasks {
         archiveClassifier.set("sources")
         from(sourceSets["main"].allSource)
 
-        if (apiSourceSet) {
-            from(sourceSets["api"].allSource)
+        additionalSourceSets.forEach {
+            from(sourceSets[it].allSource)
         }
 
         this.manifest.from(jar.get().manifest)
@@ -291,8 +293,8 @@ tasks {
         this.configurations += include
 
         // Add the API source set to the ShadowJar
-        if (apiSourceSet) {
-            from(sourceSets["api"].output)
+        additionalSourceSets.forEach {
+            from(sourceSets[it].output)
         }
         from("LICENSE")
 
@@ -327,9 +329,9 @@ tasks {
 val defaultArtifactTasks = arrayOf(
     tasks["sourcesJar"],
     tasks["javadocJar"]
-).also {
-    if (apiSourceSet) {
-        it.plus(tasks["apiJar"])
+).also { arr ->
+    additionalSourceSets.forEach { set ->
+        arr.plus(tasks[set + "Jar"])
     }
 }
 
