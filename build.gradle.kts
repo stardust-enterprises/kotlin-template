@@ -210,24 +210,29 @@ tasks {
         val javaVendor = System.getProperty("java.vendor")
         val javaVmVersion = System.getProperty("java.vm.version")
 
-        mapOf(
-            "Created-By" to "$javaVersion ($javaVendor $javaVmVersion)",
-            "Build-Date" to buildDate,
-            "Build-Time" to buildTime,
-            "Build-Revision" to buildRevision,
-            "Specification-Title" to project.name,
-            "Specification-Version" to normalizeVersion(project.version.toString()),
-            "Specification-Vendor" to Coordinates.VENDOR,
-            "Implementation-Title" to Coordinates.NAME,
-            "Implementation-Version" to Coordinates.VERSION,
-            "Implementation-Vendor" to Coordinates.VENDOR,
-            "Bundle-Name" to Coordinates.NAME,
-            "Bundle-Description" to Coordinates.DESC,
-            "Bundle-DocURL" to "https://${Coordinates.GIT_HOST}/${Coordinates.REPO_ID}",
-            "Bundle-Vendor" to Coordinates.VENDOR,
-            "Bundle-SymbolicName" to Coordinates.GROUP + '.' + Coordinates.NAME
-        ).forEach { (k, v) ->
-            manifest.attributes[k] = v
+        with(Coordinates) {
+            mapOf(
+                "Created-By" to "$javaVersion ($javaVendor $javaVmVersion)",
+                "Build-Date" to buildDate,
+                "Build-Time" to buildTime,
+                "Build-Revision" to buildRevision,
+
+                "Specification-Title" to project.name,
+                "Specification-Version" to normalizeVersion(project.version.toString()),
+                "Specification-Vendor" to VENDOR,
+
+                "Implementation-Title" to NAME,
+                "Implementation-Version" to VERSION,
+                "Implementation-Vendor" to VENDOR,
+
+                "Bundle-Name" to NAME,
+                "Bundle-Description" to DESC,
+                "Bundle-DocURL" to "https://$GIT_HOST/$REPO_ID",
+                "Bundle-Vendor" to VENDOR,
+                "Bundle-SymbolicName" to "$GROUP.$NAME"
+            ).forEach { (k, v) ->
+                manifest.attributes[k] = v
+            }
         }
 
         if (apiSourceSet) {
@@ -294,9 +299,7 @@ tasks {
         this.archiveClassifier.set(ShadowJar.classifier)
         this.manifest.inheritFrom(jar.get().manifest)
 
-        ShadowJar.packageRemappings.forEach { (key, value) ->
-            this.relocate(key, value)
-        }
+        ShadowJar.packageRemappings.forEach(this::relocate)
     }
 
     afterEvaluate {
