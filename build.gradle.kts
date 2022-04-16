@@ -33,9 +33,6 @@ plugins {
     }
 }
 
-group = Coordinates.GROUP
-version = Coordinates.VERSION
-
 // What JVM version should this project compile to
 val targetVersion = "1.8"
 // What JVM version this project is written in
@@ -43,22 +40,8 @@ val sourceVersion = "1.8"
 // Should we generate an /api/ source set
 val apiSourceSet = true
 
-// Add `include` configuration for ShadowJar
-configurations {
-    val include by creating
-    // don't include in maven pom
-    compileOnly.get().extendsFrom(include)
-    // but also work in tests
-    testImplementation.get().extendsFrom(include)
-}
-
-// Maven Repositories
-repositories {
-    mavenLocal()
-    mavenCentral()
-
-    Repositories.mavenUrls.forEach(::maven)
-}
+// Handle configurations lower down
+configurations()
 
 // Project Dependencies
 dependencies {
@@ -71,6 +54,37 @@ dependencies {
         testImplementation("org.jetbrains.kotlin", "kotlin-test", KOTLIN)
     }
 }
+
+// Maven Repositories
+repositories {
+    mavenLocal()
+    mavenCentral()
+
+    Repositories.mavenUrls.forEach(::maven)
+}
+
+fun Project.configurations() {
+    // Add `include` configuration for ShadowJar
+    configurations {
+        val include by creating
+        // don't include in maven pom
+        compileOnly.get().extendsFrom(include)
+        // but also work in tests
+        testImplementation.get().extendsFrom(include)
+
+        // Makes all the configurations use the same Kotlin version.
+        all {
+            resolutionStrategy.eachDependency {
+                if (requested.group == "org.jetbrains.kotlin") {
+                    useVersion(Dependencies.KOTLIN)
+                }
+            }
+        }
+    }
+}
+
+group = Coordinates.GROUP
+version = Coordinates.VERSION
 
 // Generate the /api/ source set
 if (apiSourceSet) {
@@ -121,7 +135,13 @@ tasks {
 
     // Configure JVM versions
     compileKotlin {
-        kotlinOptions.jvmTarget = targetVersion
+        kotlinOptions {
+            jvmTarget = targetVersion
+            freeCompilerArgs = listOf(
+                "-Xopt-in=kotlin.RequiresOptIn",
+                "-Xcontext-receivers"
+            )
+        }
     }
     compileJava {
         targetCompatibility = targetVersion
