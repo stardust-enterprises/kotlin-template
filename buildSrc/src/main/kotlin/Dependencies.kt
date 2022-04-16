@@ -1,4 +1,4 @@
-private const val kotlinVersion = "1.6.10"
+private const val kotlinVersion = "1.6.20"
 
 object Plugins {
     const val KOTLIN = kotlinVersion
@@ -6,7 +6,7 @@ object Plugins {
     const val BLOSSOM = "1.3.0"
     const val SHADOW = "7.1.2"
     const val KTLINT = "10.2.1"
-    const val DOKKA = kotlinVersion
+    const val DOKKA = "1.6.20"
     const val NEXUS_PUBLISH = "1.0.0"
 }
 
