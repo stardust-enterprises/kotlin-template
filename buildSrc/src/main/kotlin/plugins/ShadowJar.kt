@@ -2,10 +2,11 @@ package plugins
 
 object ShadowJar {
     /**
-     * Should the shadow jar override the base jarfile
-     * or be its own separate jar.
+     * The shadow jar file classifier.
+     *
+     * Put blank if you want to override the default output jar.
      */
-    const val overrideJar = false
+    const val classifier = "all"
 
     /**
      * Packages which should be moved

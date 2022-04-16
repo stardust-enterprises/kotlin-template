@@ -255,9 +255,12 @@ tasks {
 
         archiveClassifier.set("sources")
         from(sourceSets["main"].allSource)
+
         if (apiSourceSet) {
             from(sourceSets["api"].allSource)
         }
+
+        this.manifest.from(jar.get().manifest)
 
         from("LICENSE")
     }
@@ -282,7 +285,13 @@ tasks {
         this.configurations.clear()
         this.configurations += include
 
-        this.archiveClassifier.set(if (ShadowJar.overrideJar) "" else "all")
+        // Add the API source set to the ShadowJar
+        if (apiSourceSet) {
+            from(sourceSets["api"].output)
+        }
+        from("LICENSE")
+
+        this.archiveClassifier.set(ShadowJar.classifier)
         this.manifest.inheritFrom(jar.get().manifest)
 
         ShadowJar.packageRemappings.forEach { (key, value) ->
