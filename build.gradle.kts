@@ -116,7 +116,10 @@ val buildRevision: String = grgit.log()[0].id ?: "dev"
 
 // Disable unneeded rules
 ktlint {
-    this.disabledRules.add("no-wildcard-imports")
+    this.disabledRules.addAll(
+        "no-wildcard-imports",
+        "filename"
+    )
 }
 
 blossom {
