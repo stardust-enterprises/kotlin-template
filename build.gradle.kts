@@ -88,7 +88,7 @@ fun Project.configurations() {
 group = Coordinates.GROUP
 version = Coordinates.VERSION
 
-// Generate the /api/ source set
+// Generate the additional source sets
 additionalSourceSets.forEach(::createSourceSet)
 
 fun createSourceSet(name: String, sourceRoot: String = "src/$name") {
@@ -141,7 +141,6 @@ tasks {
             jvmTarget = targetVersion
             freeCompilerArgs = listOf(
                 "-opt-in=kotlin.RequiresOptIn",
-                "-Xcontext-receivers"
             )
         }
     }
