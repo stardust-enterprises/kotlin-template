@@ -1,4 +1,4 @@
-name: Build and generate docs
+name: CI Build
 
 on:
     push:

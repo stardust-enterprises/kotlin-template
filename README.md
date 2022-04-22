@@ -1,7 +1,4 @@
-# kotlin-template
-
-[![Build][badge-github-ci]][project-gradle-ci]
-[![Maven Central][badge-mvnc]][project-mvnc]
+# kotlin-template [![Build][badge-github-ci]][project-gradle-ci] [![Maven Central][badge-mvnc]][project-mvnc]
 
 template for all our [Kotlin][kotlin] projects.
 
