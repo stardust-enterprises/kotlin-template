@@ -1,0 +1,6 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:////PointingToDeclaration/kotlin-template/[root]/index.html
+$dokka.location://main/#/PointingToDeclaration/kotlin-template/[root]/main.html
+
+
