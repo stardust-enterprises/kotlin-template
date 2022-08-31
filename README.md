@@ -1,6 +1,10 @@
 # kotlin-template [![Build][badge-github-ci]][project-gradle-ci] [![Maven Central][badge-mvnc]][project-mvnc]
 
-template for all our [Kotlin][kotlin] projects.
+~~template for all our [Kotlin][kotlin] projects.~~
+
+**Post mortem**: This project **has been archived** because it was too bloated to maintain properly.  
+For a **successor**, please check out our _(very work-in-progress)_ 
+[Burst gradle plugin](https://github.com/stardust-enterprises/burst).
 
 # importing
 
